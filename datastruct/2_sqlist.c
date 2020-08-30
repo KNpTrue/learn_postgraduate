@@ -189,8 +189,24 @@ int merge(list_t *list1, list_t *list2, list_t *newlist)
 }
 
 /**
- * 2.8
+ * 2.8 array (a1, a2, a3 ... am, b1, b2, b3 ... bn) => (b1, b2, b3 ... bn, a1, a2, a3 ... am)
 */
+static void Reverse(int a[], int arraySize)
+{
+    int i, tmp;
+    for (i = 0; i < arraySize / 2; i++) {
+        tmp = a[i];
+        a[i] = a[arraySize - 1 - i];
+        a[arraySize - 1 - i] = tmp;
+    }
+}
+
+void Exchange(int a[], int m, int n, int arraySize)
+{
+    Reverse(a, arraySize);
+    Reverse(a, n);
+    Reverse(a + n, m);
+}
 
 void print_list(list_t *list)
 {
