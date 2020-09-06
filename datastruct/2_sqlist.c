@@ -9,6 +9,16 @@ typedef struct {
     unsigned int length;
 } list_t;
 
+static void reverse(int a[], int arraySize)
+{
+    int i, tmp;
+    for (i = 0; i < arraySize / 2; i++) {
+        tmp = a[i];
+        a[i] = a[arraySize - 1 - i];
+        a[arraySize - 1 - i] = tmp;
+    }
+}
+
 /**
  * 2.1 Delete minium data.
  *
@@ -191,21 +201,64 @@ int merge(list_t *list1, list_t *list2, list_t *newlist)
 /**
  * 2.8 array (a1, a2, a3 ... am, b1, b2, b3 ... bn) => (b1, b2, b3 ... bn, a1, a2, a3 ... am)
 */
-static void Reverse(int a[], int arraySize)
+void exchange(int a[], int m, int n, int arraySize)
 {
-    int i, tmp;
-    for (i = 0; i < arraySize / 2; i++) {
-        tmp = a[i];
-        a[i] = a[arraySize - 1 - i];
-        a[arraySize - 1 - i] = tmp;
-    }
+    reverse(a, arraySize);
+    reverse(a, n);
+    reverse(a + n, m);
 }
 
-void Exchange(int a[], int m, int n, int arraySize)
+/**
+ * 2.9 Search for x in the sorted list, if x is found, exchange, otherwise insert x.
+*/
+void search_exchange_insert(list_t *list, int x)
 {
-    Reverse(a, arraySize);
-    Reverse(a, n);
-    Reverse(a + n, m);
+    int left = 0;
+    int right = list->length - 1;
+    int tmp, mid, i;
+
+    assert(list);
+    if (!list->length || list->data[right] < x || list->data[left] > x) {
+        return;
+    }
+    while (right > left) {
+        mid = (right + left) / 2;
+        tmp = list->data[mid];
+        if (tmp > x) {
+            right = mid - 1;
+        } else if (tmp < x) {
+            left = mid + 1;
+        } else {
+            if (mid + 1 == list->length - 1) {
+                return;
+            }
+            list->data[mid] = list->data[mid + 1];
+            list->data[mid + 1] = tmp;
+            return;
+        }
+    }
+    for (i = list->length - 1; i >= right; i--) {
+        list->data[i + 1] = list->data[i];
+    }
+    list->data[right] = x;
+    list->length++;
+}
+
+/**
+ * 2.10 Swift all elements in array left by p
+ *
+ * 设计思想：将数组拆分成两个子数组一个(a)是从下标0到p - 1共P个元素，
+ * 另外一个(b)是从p到n-1共n-p个元素，将两个子数组先翻转然
+ * 后再将整个数组翻转即可得到一个左移p位的数组
+ *
+ * 时间复杂度：O(p) + O(n - p) + O(n) = O(n)
+ * 空间复杂度：O(1)
+*/
+void swift_left(int array[], int size, int p)
+{
+    reverse(array, p);
+    reverse(array + p, size - p);
+    reverse(array, size);
 }
 
 void print_list(list_t *list)
@@ -237,8 +290,7 @@ int main(int argc, const char *argv[])
     list_t list2;
 
     print_list(&list);
-    print_list(&list1);
-    merge(&list, &list1, &list2);
-    print_list(&list2);
+    seach_exchange_insert(&list, 4);
+    print_list(&list);
     return 0;
 }
