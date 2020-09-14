@@ -9,7 +9,12 @@ typedef struct {
     unsigned int length;
 } list_t;
 
-static void reverse(int a[], int arraySize)
+#define INT_MAX 0x0fffffff
+#define INT_MIN 0
+#define MAX(a,b) ((a) > (b) ? (a) : (b))
+#define MIN(a,b) ((a) < (b) ? (a) : (b))
+
+static void reverse(int a[], unsigned int arraySize)
 {
     int i, tmp;
     for (i = 0; i < arraySize / 2; i++) {
@@ -20,7 +25,7 @@ static void reverse(int a[], int arraySize)
 }
 
 /**
- * 2.1 Delete minium data.
+ * 1 Delete minium data.
  *
  *
  * @param list is a point to a sequential list
@@ -52,7 +57,7 @@ int del_min(list_t *list, int *min)
 }
 
 /**
- * 2.2 Reverse a list.
+ * 2 Reverse a list.
  *
  * @param list is a point to a sequential list.
 */
@@ -70,7 +75,10 @@ void reverse_list(list_t *list)
 }
 
 /**
- * 2.3 Delete all x in the list.
+ * 3 Delete all x in the list.
+ *
+ * @param list is a point to a sequential list.
+ * @param x is the number to delete.
 */
 void del_x(list_t *list, int x)
 {
@@ -90,7 +98,7 @@ void del_x(list_t *list, int x)
 }
 
 /**
- * 2.4 Delete s to t in the sorted list.
+ * 4 Delete s to t in the sorted list.
 */
 void del_s2t_sort(list_t *list, int s, int t)
 {
@@ -117,7 +125,7 @@ void del_s2t_sort(list_t *list, int s, int t)
 }
 
 /**
- * 2.5 Delete s to t in the list.
+ * 5 Delete s to t in the list.
 */
 void del_s2t(list_t *list, int s, int t)
 {
@@ -153,7 +161,7 @@ void del_s2t(list_t *list, int s, int t)
 }
 
 /**
- * 2.6 Delete repetitive data.
+ * 6 Delete repetitive data.
 */
 void del_same(list_t *list)
 {
@@ -174,7 +182,7 @@ void del_same(list_t *list)
 }
 
 /**
- * 2.7 Merge two sorted list.
+ * 7 Merge two sorted list.
 */
 int merge(list_t *list1, list_t *list2, list_t *newlist)
 {
@@ -199,7 +207,7 @@ int merge(list_t *list1, list_t *list2, list_t *newlist)
 }
 
 /**
- * 2.8 array (a1, a2, a3 ... am, b1, b2, b3 ... bn) => (b1, b2, b3 ... bn, a1, a2, a3 ... am)
+ * 8 array (a1, a2, a3 ... am, b1, b2, b3 ... bn) => (b1, b2, b3 ... bn, a1, a2, a3 ... am)
 */
 void exchange(int a[], int m, int n, int arraySize)
 {
@@ -209,7 +217,7 @@ void exchange(int a[], int m, int n, int arraySize)
 }
 
 /**
- * 2.9 Search for x in the sorted list, if x is found, exchange, otherwise insert x.
+ * 9 Search for x in the sorted list, if x is found, exchange, otherwise insert x.
 */
 void search_exchange_insert(list_t *list, int x)
 {
@@ -245,7 +253,7 @@ void search_exchange_insert(list_t *list, int x)
 }
 
 /**
- * 2.10 Swift all elements in array left by p
+ * 10 Swift all elements in array left by p
  *
  * 设计思想：将数组拆分成两个子数组一个(a)是从下标0到p - 1共P个元素，
  * 另外一个(b)是从p到n-1共n-p个元素，将两个子数组先翻转然
@@ -254,11 +262,56 @@ void search_exchange_insert(list_t *list, int x)
  * 时间复杂度：O(p) + O(n - p) + O(n) = O(n)
  * 空间复杂度：O(1)
 */
-void swift_left(int array[], int size, int p)
+void swift_left(int array[], int size, unsigned int p)
 {
     reverse(array, p);
     reverse(array + p, size - p);
     reverse(array, size);
+}
+
+/**
+ * 11 Search for the median in two sorted arrays.
+ *
+ * 设计思想：
+ *
+ * 时间复杂度：O(logL)
+ * 空间复杂度：O(1)
+*/
+int search_mid(int S1[], int S2[], unsigned int L)
+{
+    int i, j, left, right;
+    int S1_lmax, S1_rmin, S2_lmax, S2_rmin;
+
+    assert(S1);
+    assert(S2);
+    if (L <= 1) {
+        printf("L <= 1\n");
+        return;
+    }
+
+    left = 0;
+    right = L;
+
+    while (left < right) {
+        i = left + (right - left + 1) / 2;
+        j = L  - i;
+
+        if (S1[i - 1] > S2[j]) {
+            right = i - 1;
+        } else {
+            left = i;
+        }
+    }
+
+    i = left;
+    j = L - i;
+
+    S1_lmax = i == 0 ? INT_MIN : S1[i - 1];
+    S1_rmin = i > L - 1 ? INT_MAX : S1[i];
+    S2_lmax = j == 0 ? INT_MIN : S2[j - 1];
+    S2_rmin = j > L - 1 ? INT_MIN : S2[j];
+
+    return (MAX(S1_lmax, S2_lmax) + MIN(S1_rmin, S2_rmin)) / 2;
 }
 
 void print_list(list_t *list)
